@@ -1,0 +1,37 @@
+{
+    "testID": 1,
+    "classID": 1,
+    "file": "https://voca-capstone-test.s3.ap-northeast-2.amazonaws.com/test_content_1_test_paper.pdf",
+    "testContentList": [
+        {
+            "id": 1,
+            "type": "ENG_TO_KOR",
+            "question": "aboard",
+            "answer": "배위에, 기내에, 찻간에"
+        },
+        {
+            "id": 2,
+            "type": "ENG_TO_KOR",
+            "question": "abroad",
+            "answer": "외국에, 해외로"
+        },
+        {
+            "id": 3,
+            "type": "ENG_TO_KOR",
+            "question": "akin",
+            "answer": "동족의, 동종의, 유사한"
+        }
+    ],
+    "memberList": [
+        {
+            "id": 1,
+            "username": "student1",
+            "name": "student1"
+        },
+        {
+            "id": 2,
+            "username": "student2",
+            "name": "student2"
+        }
+    ]
+}
