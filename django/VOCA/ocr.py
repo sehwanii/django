@@ -145,5 +145,21 @@ def my_ocr(url):
             json.dump(ret_json, make_file, ensure_ascii=False, indent="\t")
 
 
+# def id_ocr(url):
+#     image_nparray = np.asarray(bytearray(requests.get(url).content), dtype=np.uint8)
+#     org_image = cv2.imdecode(image_nparray, cv2.IMREAD_COLOR)
+
+#     plt_imshow("orignal image", org_image)
+
+#     image = org_image.copy()
+#     image = imutils.resize(image, width=500)
+#     ratio = org_image.shape[1] / float(image.shape[1])
+
+#     # 이미지를 grayscale로 변환하고 blur를 적용
+#     # 모서리를 찾기위한 이미지 연산
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     blurred = cv2.GaussianBlur(gray, (5, 5,), 0)
+#     edged = cv2.Canny(blurred, 75, 200)
+
 
 print(my_ocr('https://user-images.githubusercontent.com/69428232/148330274-237d9b23-4a79-4416-8ef1-bb7b2b52edc4.jpg'))
