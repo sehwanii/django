@@ -31,10 +31,11 @@ def process_json(request):
             test_content_list = received_json['testContentList']
             member_list = received_json['memberList']
             
+            
             # 파싱된 데이터 활용 예시
             print(test_id, class_id, file_url)
             for content in test_content_list:
-                print(content['id'], content['type'], content['question'], content['answer'])
+                print(content['type'], content['question'], content['answer'])
             for member in member_list:
                 print(member['id'], member['username'], member['name'])
             
