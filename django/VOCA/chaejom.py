@@ -1,49 +1,38 @@
 import json
 import ocr
-def create_json_file(member_list, test_data):
+def create_json_file(testId, classId, fileList, testContentList, memberList):
     # JSON 데이터 생성
     data = {
         "testId": testId,
+        "classId" : classId,
         "personalResultList": []
     }
 
-    # 개별 결과 생성
-    for i in range(len(member_list)):
-        personal_result = {
-            "url" : member_list[i]["url"],
-            "username": member_list[i]["username"],
-            "name" : member_list[i]["name"],
-            "totalScore": 0,
-            "contentList": []
-        }
-        
-        userAnswers = ocr.my_ocr(member_list[i]["url"])
-        # 개별 문제 생성
+    for url in fileList:
+        user_id, user_answer = ocr.my_ocr(url)
+        for i in range(len(memberList)):
+            if(memberList[i]["username"] == user_id):
+                personal_result = {
+                    "url" : url,
+                    "username": user_id,
+                    "name" : memberList[i]["name"],
+                    "totalScore": 0,
+                    "contentList": []
+                }
+                for j in len(user_answer):
+                    content = {
+                        "contentId": testContentList[j]["contentId"],
+                        "question": testContentList[j]["question"],
+                        "answer": testContentList[j]["answer"],
+                        "userAnswer": user_answer[j],
+                        "result": user_answer[j] in testContentList[j]["answer"]
+                    }
 
-        for j in range(len(test_data)):
-            content = {
-                "contentId": j + 1,
-                "question": test_data[j]["question"],
-                "answer": test_data[j]["answer"],
-                "userAnswer": userAnswers[i][j],
-                "result": userAnswers[i][j] in test_data[j]["answer"]
-            }
-
-        # for j in range(len(questions)):
-        #     content = {
-        #         "contentId": j + 1,
-        #         "question": questions[j],
-        #         "answer": answers[j],
-        #         "userAnswer": userAnswers[i][j],
-        #         "result": userAnswers[i][j] in answers[j]
-        #     }
+                    # 정답인 경우 점수 증가
+                    if content["result"]:
+                        personal_result["totalScore"] += 100/user_answer
+                personal_result["contentList"].append(content)
             
-            # 정답인 경우 점수 증가
-            if content["result"]:
-                personal_result["totalScore"] += 10
-            
-            personal_result["contentList"].append(content)
-        
         data["personalResultList"].append(personal_result)
 
     # JSON 파일 생성
@@ -53,20 +42,11 @@ def create_json_file(member_list, test_data):
         json.dump(data, json_file)
 
 
-def check_test_url(url_list, memberList):
-    for url in url_list:
-        id = ocr.id_ocr(url)
-        for i in memberList:
-            if(memberList[i]["username"] == id):
-                memberList[i]["url"] = url
-                break
-
-
 # 예시 데이터
 testId = 1
 questions = ["aboard", "apple", "cat"]
 answers = ["배위에, 기내에, 찻간에", "사과", "고양이"]
-test_data = [
+testContentList = [
         {
             "id": 1,
             "type": "ENG_TO_KOR",
@@ -86,7 +66,7 @@ test_data = [
             "answer": "동족의, 동종의, 유사한"
         }
     ]
-memberList: [
+memberList = [
         {
             "id": 1,
             "username": "student1",
@@ -101,4 +81,10 @@ memberList: [
 url_list = ["url1", "url2"]
 
 # JSON 파일 생성
-create_json_file(memberList, test_data)
+
+
+def chaejeom_main(testId, classId, fileList, testContentList, memberList):
+    json_file = create_json_file(testId, classId, fileList, testContentList, memberList)
+    return json_file
+
+chaejeom_main(url_list, memberList)

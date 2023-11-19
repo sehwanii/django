@@ -45,6 +45,10 @@ def plt_imshow(title='image', img=None, figsize=(8 ,5)):
 
 
 def my_ocr(url):
+
+    user_return = []
+
+
     image_nparray = np.asarray(bytearray(requests.get(url).content), dtype=np.uint8)
     org_image = cv2.imdecode(image_nparray, cv2.IMREAD_COLOR)
 
@@ -88,9 +92,22 @@ def my_ocr(url):
 
     sorted_Cnt = sorted(Cnt, key=lambda x: x[0][0][1])
 
+    #user id 추출
+    id_image = image[y + border:y + h - border, x + border : x + w - border]
+    gray_image = cv2.cvtColor(id_image, cv2.COLOR_BGR2GRAY)
+    gray_enlarge = cv2.resize(gray_image, (2*w, 2*h), interpolation=cv2.INTER_LINEAR)
+    denoised = cv2.fastNlMeansDenoising(gray_enlarge, h=10, searchWindowSize=21, templateWindowSize=7)
+
+    gray_pin = 196
+    ret, thresh = cv2.threshold(denoised, gray_pin, 255, cv2.THRESH_BINARY)
+    thresh[260:2090] = ~thresh[260:2090]
+    result_image = np.hstack((denoised, thresh))
+    user_id = pytesseract.image_to_data(denoised.copy(),lang='eng')
+
+
     border = 7
     #ret_json = []
-    user_return = []
+    
     english_config = r'--oem 3 --psm 6 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     for contour in sorted_Cnt:
         x, y, w, h = cv2.boundingRect(contour)
@@ -117,7 +134,7 @@ def my_ocr(url):
             if(len(result['text'])>5):
                 for i in range(5,len(result['text'])):
                     detected_text += result['text'][i]
-            bounding_box = [x,y,w,h]
+            #bounding_box = [x,y,w,h]
             confidence = min(result['conf'][4:])
             #ret_json.append({'bounding_box': bounding_box, 'text': detected_text.lower(), 'confidence':confidence})
             user_return.append(detected_text.lower())
@@ -140,7 +157,7 @@ def my_ocr(url):
             print(f"detected_text = {detected_text} , confidence = {confidence}")
             plt_imshow("Outline", denoised) 
 
-    return user_return
+    return user_id, user_return
     with open('test.json', 'w', encoding='utf-8') as make_file:
             json.dump(ret_json, make_file, ensure_ascii=False, indent="\t")
 
