@@ -78,7 +78,7 @@ def create_json_file(testId, classId, fileList, testContentList, memberList, typ
 
                     # 정답인 경우 점수 증가
                     if content["result"]:
-                        personal_result["totalScore"] += 100/len(user_answer)
+                        personal_result["totalScore"] += 1
                     personal_result["contentList"].append(content)
             
         data["personalResultList"].append(personal_result)
