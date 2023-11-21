@@ -44,7 +44,7 @@ def plt_imshow(title='image', img=None, figsize=(8 ,5)):
         plt.show()
 
 
-def my_ocr(url):
+def my_ocr(url, type_list):
 
     user_return = []
 
@@ -52,7 +52,7 @@ def my_ocr(url):
     image_nparray = np.asarray(bytearray(requests.get(url).content), dtype=np.uint8)
     org_image = cv2.imdecode(image_nparray, cv2.IMREAD_COLOR)
 
-    plt_imshow("orignal image", org_image)
+    #plt_imshow("orignal image", org_image)
 
     image = org_image.copy()
     image = imutils.resize(image, width=500)
@@ -64,7 +64,7 @@ def my_ocr(url):
     blurred = cv2.GaussianBlur(gray, (5, 5,), 0)
     edged = cv2.Canny(blurred, 75, 200)
     
-    plt_imshow(['gray', 'blurred', 'edged'], [gray, blurred, edged])
+    #plt_imshow(['gray', 'blurred', 'edged'], [gray, blurred, edged])
 
     # contours를 찾아 크기순으로 정렬
     cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -88,7 +88,7 @@ def my_ocr(url):
     output = image.copy()
     cv2.drawContours(output, Cnt, -1, (0, 255, 0), 2)
 
-    plt_imshow("Outline", output)
+    #plt_imshow("Outline", output)
 
     sorted_Cnt = sorted(Cnt, key=lambda x: x[0][0][1])
 
@@ -126,7 +126,7 @@ def my_ocr(url):
         result_image = np.hstack((denoised, thresh))
 
 
-        if (x<100): #영어 OCR
+        if (type_list == 'KOR_TO_ENG'): #영어 OCR
 
             result = pytesseract.image_to_data(denoised.copy(), config=english_config, lang='eng',output_type=pytesseract.Output.DICT)
             
